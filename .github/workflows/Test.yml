@@ -1,5 +1,3 @@
-//shiva
-
 name: Deploy CDK Stack
 
 on:
