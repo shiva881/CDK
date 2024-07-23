@@ -19,7 +19,6 @@ jobs:
           node-version: '18'  # Use a supported Node.js version
 
       - name: Install dependencies
-        working-directory: ./cdk-project  # Adjust to the directory containing your package.json
         run: npm install
 
       - name: Configure AWS credentials
@@ -33,9 +32,7 @@ jobs:
         run: npm install -g aws-cdk
 
       - name: Bootstrap CDK environment
-        working-directory: ./cdk-project  # Adjust to the directory containing your CDK app
         run: cdk bootstrap
 
       - name: Deploy CDK stack
-        working-directory: ./cdk-project  # Adjust to the directory containing your CDK app
         run: cdk deploy --require-approval never
