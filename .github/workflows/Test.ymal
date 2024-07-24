@@ -13,8 +13,8 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
-      - name: List directory contents
-        run: ls -R  # List files and directories to check structure
+      - name: List directory contents at root
+        run: ls -R  # List all files and directories at the root
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -26,7 +26,12 @@ jobs:
 
       - name: Check if cdk-app directory exists
         run: |
-          if [ -d "cdk-app" ]; then echo "Directory exists"; else echo "Directory does not exist"; fi
+          if [ -d "cdk-app" ]; then
+            echo "Directory cdk-app exists"
+          else
+            echo "Directory cdk-app does not exist"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: |
@@ -56,7 +61,13 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: List directory contents after build
-        run: ls -R cdk-app  # List files and directories after build
+        run: |
+          if [ -d "cdk-app" ]; then
+            ls -R cdk-app  # List files in cdk-app directory
+          else
+            echo "Directory cdk-app does not exist"
+            exit 1
+          fi
 
       - name: Bootstrap CDK environment
         run: |
