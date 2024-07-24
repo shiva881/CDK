@@ -13,8 +13,8 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
-      - name: List root directory contents
-        run: ls -R
+      - name: List directory contents
+        run: ls -R  # List all files and directories to confirm structure
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -23,13 +23,6 @@ jobs:
 
       - name: Install AWS CDK globally
         run: npm install -g aws-cdk
-
-      - name: Verify directory structure
-        run: |
-          echo "Root directory:"
-          ls -R
-          echo "Subdirectories:"
-          find . -type d
 
       - name: Install dependencies
         run: |
@@ -40,7 +33,7 @@ jobs:
             exit 1
           fi
 
-      - name: Compile TypeScript
+      - name: Build CDK App
         run: |
           if [ -f "package.json" ]; then
             npm run build
@@ -59,7 +52,7 @@ jobs:
       - name: Bootstrap CDK environment
         run: |
           if [ -f "package.json" ]; then
-            cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION --app "node dist/Glue.js"
+            cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION
           else
             echo "package.json not found"
             exit 1
@@ -71,7 +64,7 @@ jobs:
       - name: Deploy CDK stack
         run: |
           if [ -f "package.json" ]; then
-            cdk deploy --require-approval never --app "node dist/Glue.js"
+            cdk deploy --require-approval never
           else
             echo "package.json not found"
             exit 1
