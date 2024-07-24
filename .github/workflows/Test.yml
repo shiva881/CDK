@@ -18,8 +18,14 @@ jobs:
         with:
           node-version: '18'  # Use a supported Node.js version
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Install AWS CDK globally
         run: npm install -g aws-cdk
+
+      - name: Compile TypeScript
+        run: npm run build  # Ensure you have a build script in your package.json
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -32,13 +38,13 @@ jobs:
         run: ls -R
 
       - name: Bootstrap CDK environment
-        run: cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION --app "node bin/app.js"
+        run: cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION --app "node dist/Glue.js"
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Deploy CDK stack
-        run: cdk deploy --require-approval never --app "node bin/app.js"
+        run: cdk deploy --require-approval never --app "node dist/Glue.js"
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
