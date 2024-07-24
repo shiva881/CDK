@@ -13,8 +13,8 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
-      - name: List directory contents at root
-        run: ls -R  # List all files and directories at the root
+      - name: List root directory contents
+        run: ls -R
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -24,32 +24,28 @@ jobs:
       - name: Install AWS CDK globally
         run: npm install -g aws-cdk
 
-      - name: Check if cdk-app directory exists
+      - name: Verify directory structure
         run: |
-          if [ -d "cdk-app" ]; then
-            echo "Directory cdk-app exists"
-          else
-            echo "Directory cdk-app does not exist"
-            exit 1
-          fi
+          echo "Root directory:"
+          ls -R
+          echo "Subdirectories:"
+          find . -type d
 
       - name: Install dependencies
         run: |
-          if [ -d "cdk-app" ]; then
-            cd cdk-app
+          if [ -f "package.json" ]; then
             npm install
           else
-            echo "Directory cdk-app does not exist"
+            echo "package.json not found"
             exit 1
           fi
 
       - name: Compile TypeScript
         run: |
-          if [ -d "cdk-app" ]; then
-            cd cdk-app
+          if [ -f "package.json" ]; then
             npm run build
           else
-            echo "Directory cdk-app does not exist"
+            echo "package.json not found"
             exit 1
           fi
 
@@ -60,22 +56,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: List directory contents after build
-        run: |
-          if [ -d "cdk-app" ]; then
-            ls -R cdk-app  # List files in cdk-app directory
-          else
-            echo "Directory cdk-app does not exist"
-            exit 1
-          fi
-
       - name: Bootstrap CDK environment
         run: |
-          if [ -d "cdk-app" ]; then
-            cd cdk-app
+          if [ -f "package.json" ]; then
             cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION --app "node dist/Glue.js"
           else
-            echo "Directory cdk-app does not exist"
+            echo "package.json not found"
             exit 1
           fi
         env:
@@ -84,11 +70,10 @@ jobs:
 
       - name: Deploy CDK stack
         run: |
-          if [ -d "cdk-app" ]; then
-            cd cdk-app
+          if [ -f "package.json" ]; then
             cdk deploy --require-approval never --app "node dist/Glue.js"
           else
-            echo "Directory cdk-app does not exist"
+            echo "package.json not found"
             exit 1
           fi
         env:
