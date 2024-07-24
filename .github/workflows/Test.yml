@@ -29,13 +29,13 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Bootstrap CDK environment
-        run: cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION
+        run: cdk bootstrap --app "node lib/my-app.js"
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Deploy CDK stack
-        run: cdk deploy --require-approval never
+        run: cdk deploy --require-approval never --app "node lib/my-app.js"
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
