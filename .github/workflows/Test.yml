@@ -32,11 +32,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Bootstrap CDK environment
-        run: cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION
-        env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+      - name: Check current directory
+        run: pwd
+
+      - name: List files in current directory
+        run: ls -la
+
+      - name: Check contents of Glue.ts
+        run: cat Glue.ts
 
       - name: Synthesize CDK stack
         run: cdk synth --app "npx ts-node Glue.ts"
