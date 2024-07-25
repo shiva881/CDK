@@ -38,6 +38,12 @@ jobs:
       - name: List files in current directory
         run: ls -la
 
+      - name: Create cdk.out directory if it does not exist
+        run: mkdir -p cdk.out
+
+      - name: List files in cdk.out directory
+        run: ls -la cdk.out
+
       - name: Check contents of Glue.ts
         run: cat Glue.ts
 
