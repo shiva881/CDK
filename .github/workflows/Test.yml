@@ -18,14 +18,20 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Install AWS CDK globally
         run: npm install -g aws-cdk
 
-      - name: Install TypeScript and ts-node
-        run: npm install ts-node typescript
-
-      - name: Install CDK dependencies
-        run: npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3
+      - name: Initialize npm and install dependencies
+        run: |
+          npm init -y
+          npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3 ts-node typescript
 
       - name: Create cdk.out directory
         run: mkdir -p cdk.out
@@ -33,17 +39,14 @@ jobs:
       - name: Check if Glue.ts exists
         run: ls -la Glue.ts
 
-      - name: Display contents of Glue.ts
-        run: cat Glue.ts || echo "Glue.ts not found"
-
       - name: Synthesize CDK stack
-        run: cdk synth --app "npx ts-node Glue.ts"
+        run: cdk synth
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Deploy CDK stack
-        run: cdk deploy --app "npx ts-node Glue.ts" --require-approval never
+        run: cdk deploy --require-approval never
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
