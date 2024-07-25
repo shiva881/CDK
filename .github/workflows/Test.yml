@@ -21,6 +21,12 @@ jobs:
       - name: Install AWS CDK globally
         run: npm install -g aws-cdk
 
+      - name: Create cdk.json file
+        run: |
+          echo '{
+            "app": "npx ts-node Glue.ts"
+          }' > cdk.json
+
       - name: Install dependencies
         run: |
           npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3 ts-node typescript
@@ -32,9 +38,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Check current directory
-        run: pwd
-
       - name: List files in current directory
         run: ls -la
 
@@ -43,18 +46,6 @@ jobs:
 
       - name: Create cdk.out directory if it does not exist
         run: mkdir -p cdk.out
-
-      - name: List files in cdk.out directory
-        run: ls -la cdk.out
-
-      - name: Check Node.js version
-        run: node -v
-
-      - name: Check npm version
-        run: npm -v
-
-      - name: Check TypeScript version
-        run: npx tsc -v
 
       - name: Synthesize CDK stack
         run: cdk synth --app "npx ts-node Glue.ts"
