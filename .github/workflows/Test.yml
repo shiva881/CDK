@@ -25,8 +25,7 @@ jobs:
         run: npm install ts-node typescript
 
       - name: Install CDK dependencies
-        run: |
-          npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3
+        run: npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3
 
       - name: Create cdk.json file
         run: |
@@ -34,14 +33,14 @@ jobs:
             "app": "npx ts-node Glue.ts"
           }' > cdk.json
 
+      - name: Create cdk.out directory
+        run: mkdir -p cdk.out
+
       - name: Check if Glue.ts exists
         run: ls -la Glue.ts
 
       - name: Display contents of Glue.ts
         run: cat Glue.ts || echo "Glue.ts not found"
-
-      - name: Create cdk.out directory
-        run: mkdir -p cdk.out
 
       - name: Synthesize CDK stack
         run: cdk synth --app "npx ts-node Glue.ts"
