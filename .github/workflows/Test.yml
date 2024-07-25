@@ -36,6 +36,12 @@ jobs:
       - name: Create cdk.out directory
         run: mkdir -p cdk.out
 
+      - name: Create cdk.json if it doesn't exist
+        run: |
+          if [ ! -f "cdk.json" ]; then
+            echo '{ "app": "npx ts-node Glue.ts" }' > cdk.json
+          fi
+
       - name: Check if Glue.ts exists
         run: ls -la Glue.ts
 
