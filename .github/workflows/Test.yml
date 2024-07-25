@@ -26,12 +26,30 @@ jobs:
           npm init -y
           npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3 ts-node typescript
 
-      - name: Create cdk.json file
+      - name: Create tsconfig.json
         run: |
-          echo '{ "app": "npx ts-node Glue.ts" }' > cdk.json
+          echo '{
+            "compilerOptions": {
+              "target": "es2018",
+              "module": "commonjs",
+              "outDir": "./dist",
+              "rootDir": "./",
+              "strict": true,
+              "esModuleInterop": true
+            },
+            "include": ["Glue.ts"],
+            "exclude": ["node_modules"]
+          }' > tsconfig.json
 
       - name: Compile TypeScript
         run: npx tsc
+
+      - name: Verify output directory
+        run: ls -R dist
+
+      - name: Create cdk.json file
+        run: |
+          echo '{ "app": "npx ts-node dist/Glue.js" }' > cdk.json
 
       - name: Synthesize CDK stack
         run: cdk synth
