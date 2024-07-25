@@ -27,9 +27,12 @@ jobs:
             "app": "npx ts-node Glue.ts"
           }' > cdk.json
 
-      - name: Install dependencies
+      - name: Install TypeScript and ts-node
+        run: npm install ts-node typescript
+
+      - name: Install CDK dependencies
         run: |
-          npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3 ts-node typescript
+          npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
