@@ -30,7 +30,6 @@ jobs:
         run: |
           echo '{ "app": "npx ts-node Glue.ts" }' > cdk.json
 
-
       - name: Compile TypeScript
         run: npx tsc
 
