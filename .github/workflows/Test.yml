@@ -27,7 +27,8 @@ jobs:
           npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3 ts-node typescript
 
       - name: Create cdk.json file
-        run: echo '{ "app": "npx ts-node Glue.ts" }' > cdk.json
+        run: echo "{ \"app\": \"npx ts-node Glue.ts\" }" > cdk.json
+
 
       - name: Synthesize CDK stack
         run: cdk synth
