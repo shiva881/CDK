@@ -27,12 +27,6 @@ jobs:
       - name: Install CDK dependencies
         run: npm install @aws-cdk/core @aws-cdk/aws-glue @aws-cdk/aws-iam @aws-cdk/aws-s3
 
-      - name: Create cdk.json file
-        run: |
-          echo '{
-            "app": "npx ts-node Glue.ts"
-          }' > cdk.json
-
       - name: Create cdk.out directory
         run: mkdir -p cdk.out
 
