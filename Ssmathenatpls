@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  AthenaWorkGroupNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/athena/workgroup-name'
+      Type: 'String'
+      Value: 'my-athena-workgroup'
+  
+  AthenaQueryNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/athena/query-name'
+      Type: 'String'
+      Value: 'my-athena-named-query'
+
+  AthenaOutputLocationParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/athena/output-location'
+      Type: 'String'
+      Value: 's3://my-cba881/athena-results/'
+
+  AthenaDatabaseNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/athena/database-name'
+      Type: 'String'
+      Value: 'default'
+
+  AthenaQueryStringParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/athena/query-string'
+      Type: 'String'
+      Value: 'SELECT * FROM my_table'
