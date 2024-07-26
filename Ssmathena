@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  WorkGroupNameParameter:
+    Type: String
+    Description: The SSM parameter name for the Athena workgroup name
+    Default: '/myapp/athena/workgroup-name'
+
+  QueryNameParameter:
+    Type: String
+    Description: The SSM parameter name for the Athena named query name
+    Default: '/myapp/athena/query-name'
+
+  OutputLocationParameter:
+    Type: String
+    Description: The SSM parameter name for the Athena query results output location
+    Default: '/myapp/athena/output-location'
+
+  DatabaseNameParameter:
+    Type: String
+    Description: The SSM parameter name for the Athena database name
+    Default: '/myapp/athena/database-name'
+
+  QueryStringParameter:
+    Type: String
+    Description: The SSM parameter name for the Athena query string
+    Default: '/myapp/athena/query-string'
+
+Resources:
+  AthenaWorkGroup:
+    Type: 'AWS::Athena::WorkGroup'
+    Properties:
+      Name: !Sub '{{resolve:ssm:${WorkGroupNameParameter}}}'
+      Description: 'Athena workgroup for shared role'
+      WorkGroupConfiguration:
+        EnforceWorkGroupConfiguration: true
+        PublishCloudWatchMetricsEnabled: true
+        ResultConfiguration:
+          OutputLocation: !Sub '{{resolve:ssm:${OutputLocationParameter}}}'
+      Tags:
+        - Key: 'Name'
+          Value: !Sub '{{resolve:ssm:${WorkGroupNameParameter}}}'
+
+  AthenaNamedQuery:
+    Type: 'AWS::Athena::NamedQuery'
+    Properties:
+      Name: !Sub '{{resolve:ssm:${QueryNameParameter}}}'
+      Description: 'Athena named query for shared role'
+      Database: !Sub '{{resolve:ssm:${DatabaseNameParameter}}}'
+      QueryString: !Sub '{{resolve:ssm:${QueryStringParameter}}}'
+      WorkGroup: !Ref AthenaWorkGroup
+
+Outputs:
+  AthenaWorkGroupName:
+    Description: 'Name of the Athena workgroup'
+    Value: !Ref AthenaWorkGroup
+    Export:
+      Name: 'AthenaWorkGroupName'
