@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  UnifiedRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'UnifiedServiceRole'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'glue.amazonaws.com'
+                - 'athena.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole'
+        - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
+      Policies:
+        - PolicyName: 'S3ReadWritePolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 's3:GetObject'
+                  - 's3:PutObject'
+                  - 's3:ListBucket'
+                Resource:
+                  - 'arn:aws:s3:::my-shiv881'
+                  - 'arn:aws:s3:::my-shiv881/*'
+        - PolicyName: 'CustomAthenaPolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'athena:StartQueryExecution'
+                  - 'athena:GetQueryExecution'
+                  - 'athena:GetQueryResults'
+                  - 'athena:ListQueryExecutions'
+                  - 'athena:ListDatabases'
+                  - 'athena:ListTables'
+                  - 'athena:BatchGetQueryExecution'
+                  - 'athena:BatchGetQueryResults'
+                Resource: '*'
+
+Outputs:
+  RoleArn:
+    Description: 'ARN of the IAM role for Glue and Athena'
+    Value: !GetAtt UnifiedRole.Arn
+    Export:
+      Name: 'UnifiedServiceRoleArn'
