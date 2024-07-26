@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  GlueDatabaseNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/glue/database-name'
+      Type: 'String'
+      Value: 'mydatabase'
+  
+  GlueTableNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/glue/table-name'
+      Type: 'String'
+      Value: 'mytable'
+
+  GlueCrawlerNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/glue/crawler-name'
+      Type: 'String'
+      Value: 'my-crawler'
+
+  GlueJobNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/glue/job-name'
+      Type: 'String'
+      Value: 'my-job'
+
+  GlueTriggerNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/glue/trigger-name'
+      Type: 'String'
+      Value: 'my-trigger'
+
+  GlueScriptLocationParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/glue/script-location'
+      Type: 'String'
+      Value: 's3://my-cba881/scripts/my_glue_scripts.py'
+
+  GlueS3DataPathParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/glue/data-path'
+      Type: 'String'
+      Value: 's3://my-cba881/data/'
