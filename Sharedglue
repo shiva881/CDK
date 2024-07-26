@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  DatabaseNameParameter:
+    Type: String
+    Description: The SSM parameter name for the Glue database name
+    Default: '/myapp/glue/database-name'
+
+  TableNameParameter:
+    Type: String
+    Description: The SSM parameter name for the Glue table name
+    Default: '/myapp/glue/table-name'
+
+  CrawlerNameParameter:
+    Type: String
+    Description: The SSM parameter name for the Glue crawler name
+    Default: '/myapp/glue/crawler-name'
+
+  JobNameParameter:
+    Type: String
+    Description: The SSM parameter name for the Glue job name
+    Default: '/myapp/glue/job-name'
+
+  TriggerNameParameter:
+    Type: String
+    Description: The SSM parameter name for the Glue trigger name
+    Default: '/myapp/glue/trigger-name'
+
+  ScriptLocationParameter:
+    Type: String
+    Description: The SSM parameter name for the Glue job script location in S3
+    Default: '/myapp/glue/script-location'
+
+  S3DataPathParameter:
+    Type: String
+    Description: The SSM parameter name for the data location in S3
+    Default: '/myapp/glue/data-path'
+
+Resources:
+  GlueDatabase:
+    Type: 'AWS::Glue::Database'
+    Properties:
+      CatalogId: !Ref 'AWS::AccountId'
+      DatabaseInput:
+        Name: !Sub '{{resolve:ssm:${DatabaseNameParameter}}}'
+        Description: 'My Glue database'
+
+  GlueTable:
+    Type: 'AWS::Glue::Table'
+    Properties:
+      DatabaseName: !Sub '{{resolve:ssm:${DatabaseNameParameter}}}'
+      CatalogId: !Ref 'AWS::AccountId'
+      TableInput:
+        Name: !Sub '{{resolve:ssm:${TableNameParameter}}}'
+        Description: 'My Glue table'
+        StorageDescriptor:
+          Columns:
+            - Name: 'column1'
+              Type: 'string'
+            - Name: 'column2'
+              Type: 'int'
+          Location: !Sub '{{resolve:ssm:${S3DataPathParameter}}}'
+          InputFormat: 'org.apache.hadoop.mapred.TextInputFormat'
+          OutputFormat: 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+          SerdeInfo:
+            Name: 'myserde'
+            SerializationLibrary: 'org.openx.data.jsonserde.JsonSerDe'
+        TableType: 'EXTERNAL_TABLE'
+
+  GlueCrawler:
+    Type: 'AWS::Glue::Crawler'
+    Properties:
+      Role: !ImportValue UnifiedServiceRoleArn
+      DatabaseName: !Sub '{{resolve:ssm:${DatabaseNameParameter}}}'
+      Targets:
+        S3Targets:
+          - Path: !Sub '{{resolve:ssm:${S3DataPathParameter}}}'
+      TablePrefix: 'prefix_'
+      Name: !Sub '{{resolve:ssm:${CrawlerNameParameter}}}'
+      # Optional: add other properties like 'CrawlerSecurityConfiguration'
+
+  GlueJob:
+    Type: 'AWS::Glue::Job'
+    Properties:
+      Role: !ImportValue UnifiedServiceRoleArn
+      Command:
+        Name: 'glueetl'
+        ScriptLocation: !Sub '{{resolve:ssm:${ScriptLocationParameter}}}'
+      GlueVersion: '3.0'
+      MaxCapacity: 2
+      Name: !Sub '{{resolve:ssm:${JobNameParameter}}}'
+      Timeout: 10
+      # Optional: add other properties like 'Connections', 'MaxRetries', etc.
+
+  GlueTrigger:
+    Type: 'AWS::Glue::Trigger'
+    Properties:
+      Type: 'SCHEDULED'
+      Schedule: 'cron(0 0 * * ? *)'  # Runs daily at midnight
+      Actions:
+        - JobName: !Sub '{{resolve:ssm:${JobNameParameter}}}'
+      Name: !Sub '{{resolve:ssm:${TriggerNameParameter}}}'
+      Description: 'Trigger to run Glue job on a schedule'
