@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  SageMakerLifecycleConfigNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/sagemaker/lifecycle-config-name'
+      Type: 'String'
+      Value: 'my-lifecycle-config'
+
+  SageMakerNotebookInstanceNameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: '/myapp/sagemaker/notebook-instance-name'
+      Type: 'String'
+      Value: 'my-sagemaker-notebook'
